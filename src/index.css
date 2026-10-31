@@ -1,0 +1,237 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ivory: #fdf6e7;
+  --color-cream: #f7ead0;
+  --color-maroon: #6b0f1a;
+  --color-kumkum: #a4161a;
+  --color-turmeric: #e8a317;
+  --color-gold: #c9a227;
+  --color-ink: #2b1a12;
+
+  --font-sans: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-script: 'Great Vibes', 'Cormorant Garamond', cursive;
+  --font-telugu: 'Noto Serif Telugu', 'Cormorant Garamond', serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ivory font-sans text-ink antialiased;
+  }
+  body.invite-locked {
+    overflow: hidden;
+  }
+}
+
+/* Dotted kolam pattern behind the whole page */
+.kolam-bg {
+  background-color: var(--color-ivory);
+  background-image:
+    radial-gradient(circle at 1px 1px, #c9a22747 1px, transparent 0),
+    radial-gradient(circle, #c9a22712 18px, transparent 19px);
+  background-size: 22px 22px, 88px 88px;
+}
+
+.gold-text {
+  color: transparent;
+  background: linear-gradient(100deg, #8a6a12, #e0be55 40%, #a8841c 60%, #e8c766);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.arch {
+  border-radius: 999px 999px 1.25rem 1.25rem;
+}
+
+/* Scroll-triggered fade up (see useReveal) */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+.reveal { opacity: 0; }
+.reveal.is-visible { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+
+/* Garland sway */
+@keyframes sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+.sway {
+  transform-box: fill-box;
+  transform-origin: top;
+  animation: sway 6s ease-in-out infinite;
+}
+
+/* Falling petals */
+@keyframes petal-fall {
+  0% { opacity: 0; transform: translateY(-10vh) rotate(0); }
+  10% { opacity: 1; }
+  100% { opacity: 0.2; transform: translate3d(var(--drift, 40px), 105vh, 0) rotate(540deg); }
+}
+.petal {
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 16px;
+  border-radius: 80% 0;
+  pointer-events: none;
+  animation: petal-fall linear infinite;
+}
+
+/* Opening doors */
+.door {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  overflow: hidden;
+  background-color: var(--color-maroon);
+  background-image:
+    radial-gradient(circle, #e8a31759 2px, transparent 3px),
+    linear-gradient(45deg, transparent 46%, #c9a2272e 48% 52%, transparent 54%),
+    linear-gradient(-45deg, transparent 46%, #c9a2272e 48% 52%, transparent 54%);
+  background-size: 44px 44px;
+  transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+}
+.door::before {
+  content: '';
+  position: absolute;
+  inset: 18px;
+  border: 2px solid #c9a22780;
+  border-radius: 999px 999px 12px 12px;
+}
+.door-left { left: 0; box-shadow: inset -8px 0 18px #0006; }
+.door-right { right: 0; box-shadow: inset 8px 0 18px #0006; }
+.door-left.is-open { transform: translateX(-100%); }
+.door-right.is-open { transform: translateX(100%); }
+
+/* Moments photo strip */
+.photo-strip {
+  scrollbar-width: thin;
+  scrollbar-color: #c9a22780 transparent;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+}
+.photo-strip.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+.photo-strip img {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* ---- Sacred motifs ------------------------------------------------------ */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+.halo { transform-box: fill-box; transform-origin: center; animation: spin 90s linear infinite; }
+.halo-rev { transform-box: fill-box; transform-origin: center; animation: spin 60s linear infinite reverse; }
+.glow { transform-box: fill-box; transform-origin: center; animation: glow-pulse 4s ease-in-out infinite; }
+
+/* Lotus petals unfold from closed to open once the lotus is revealed */
+.lotus .lotus-petal {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: rotate(0deg) scale(0.35);
+  opacity: 0;
+  transition: transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d), opacity 0.6s ease var(--d);
+}
+.lotus.is-visible .lotus-petal { transform: rotate(var(--a)) scale(1); opacity: 1; }
+
+@keyframes om-glow {
+  0%, 100% { text-shadow: 0 0 10px #f2c14e88, 0 0 2px #fff; transform: translateY(0); }
+  50% { text-shadow: 0 0 24px #f2c14e, 0 0 4px #fff; transform: translateY(-3px); }
+}
+.om { animation: om-glow 4s ease-in-out infinite; }
+
+/* Elephants: trunk raises and lowers, ears flap */
+@keyframes trunk { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
+@keyframes ear { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.86); } }
+.trunk { transform-box: view-box; transform-origin: 170px 74px; animation: trunk 3.6s ease-in-out infinite; }
+.ear { transform-box: fill-box; transform-origin: 90% 30%; animation: ear 2.8s ease-in-out infinite; }
+
+/* Deepam flame */
+@keyframes flicker {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  20% { transform: scale(0.94, 1.07) skewX(2deg); }
+  45% { transform: scale(1.05, 0.95) skewX(-2.5deg); }
+  70% { transform: scale(0.97, 1.04) skewX(1.5deg); }
+}
+.flame { transform-box: fill-box; transform-origin: 50% 100%; animation: flicker 1.4s ease-in-out infinite; }
+.flame-glow { transform-box: fill-box; transform-origin: center; animation: glow-pulse 1.7s ease-in-out infinite; }
+
+/* Temple bells */
+@keyframes bell-sway { 0%, 100% { transform: rotate(4deg); } 50% { transform: rotate(-4deg); } }
+@keyframes bell-ring {
+  0% { transform: rotate(0deg); }
+  12% { transform: rotate(24deg); }
+  30% { transform: rotate(-19deg); }
+  48% { transform: rotate(13deg); }
+  66% { transform: rotate(-8deg); }
+  84% { transform: rotate(4deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes clapper-ring {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(-18deg); }
+  35% { transform: rotate(14deg); }
+  55% { transform: rotate(-8deg); }
+}
+.bell { transform-origin: 50% 0; animation: bell-sway 3.2s ease-in-out infinite; }
+.bell.is-ringing { animation: bell-ring 1.5s ease-out; }
+.bell .clapper { transform-box: view-box; transform-origin: 20px 30px; }
+.bell.is-ringing .clapper { animation: clapper-ring 1.5s ease-out; }
+
+/* Venkateswara emblem: chakra turns, shankha floats, namam glows */
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes namam-glow { 0%, 100% { filter: drop-shadow(0 0 0 #c1121f00); } 50% { filter: drop-shadow(0 0 5px #e63946); } }
+.chakra-spin { transform-box: fill-box; transform-origin: center; animation: spin 16s linear infinite; }
+.float { animation: floaty 4s ease-in-out infinite; }
+.namam-line { animation: namam-glow 3s ease-in-out infinite; }
+
+/* Muggu draws itself, then fills with colour */
+.muggu .line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 2.2s ease-in-out var(--d, 0s);
+}
+.muggu.is-visible .line { stroke-dashoffset: 0; }
+.muggu .fill { fill-opacity: 0; transition: stroke-dashoffset 2.2s ease-in-out var(--d, 0s), fill-opacity 1.2s ease calc(var(--d, 0s) + 1.6s); }
+.muggu.is-visible .fill { fill-opacity: 0.85; }
+.muggu .dot { opacity: 0; transition: opacity 0.4s ease var(--d, 0s); }
+.muggu.is-visible .dot { opacity: 1; }
+
+/* Gold light sweeping across the couple's names */
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  55%, 100% { background-position: 0 0; }
+}
+.shimmer {
+  color: transparent;
+  background: linear-gradient(110deg, var(--color-maroon) 42%, #f0d27a 50%, var(--color-maroon) 58%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .door { transition: none; }
+  .reveal { opacity: 1; }
+  .reveal.is-visible, .sway, .petal,
+  .halo, .halo-rev, .glow, .om, .trunk, .ear, .flame, .flame-glow, .bell, .bell .clapper, .shimmer,
+  .chakra-spin, .float, .namam-line { animation: none; }
+  .petal { display: none; }
+  .lotus .lotus-petal { transition: none; }
+  .muggu .line, .muggu .fill, .muggu .dot { transition: none; }
+}
